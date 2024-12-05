@@ -1,6 +1,7 @@
 const handlebars = require('handlebars');
 const axios = require('axios');
 const { pd } = require('pretty-data');
+const xmlFormatter = require('xml-formatter');
 const {
   RequestValidationError,
   RequestRuntimeError,
@@ -10,7 +11,6 @@ const Parser = require('./uapi-parser');
 const errorsConfig = require('./errors-config');
 const prepareRequest = require('./prepare-request');
 const configInit = require('../config');
-
 handlebars.registerHelper('equal', require('handlebars-helper-equal'));
 
 /**
@@ -76,9 +76,10 @@ module.exports = function uapiRequest(
         }));
 
     const sendRequest = async (xml) => {
+      const formattedXml = xmlFormatter.format(xml, { collapseContent: true });
       if (debugMode) {
         log('Request URL: ', service);
-        log('Request XML: ', pd.xml(xml));
+        log('Request XML: ', formattedXml);
       }
 
       try {
@@ -94,7 +95,7 @@ module.exports = function uapiRequest(
             'Accept-Encoding': 'gzip',
             'Content-Type': 'text/xml',
           },
-          data: xml,
+          data: formattedXml,
         });
 
         if (debugMode) {
