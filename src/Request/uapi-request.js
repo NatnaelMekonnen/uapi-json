@@ -76,7 +76,7 @@ module.exports = function uapiRequest(
         }));
 
     const sendRequest = async (xml) => {
-      const formattedXml = xmlFormatter.format(xml, { collapseContent: true });
+      const formattedXml = xmlFormatter(xml, { collapseContent: true });
       if (debugMode) {
         log('Request URL: ', service);
         log('Request XML: ', formattedXml);
